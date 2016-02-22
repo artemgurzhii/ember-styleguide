@@ -77,7 +77,7 @@ Usage observers is very easy **BUT** it leads to unpredictable actions in app. O
 export default Controller.extend({
 	actions: {
     	change() {
-        	console.log(`change detected: ${this.get('text')`);
+        	console.log(`change detected: ${this.get('text')}`);
         }
     }
 });
@@ -197,3 +197,4 @@ test('check changed message', function(assert) {
 	PageObject.create({ assert })
     		  .assertMessage('cabbage');
 });
+```
