@@ -214,6 +214,25 @@ export default Component.extend({
     }
 });
 ```
+## Templates
+
+## Use components in `{{#each}}` blocks
+When content of each block is larger than one line, use component to wrap this code. Ember convention is build app through divided to smaller modules (Components). This is more flexible and readable. Everywhere when you can extract reusable component, do it!
+
+```hbs
+// GOOD
+{{#each paintings as |paiting|}}
+	{{paiting-details paiting=paiting}}
+{{/each}}
+
+// BAD
+{{#each paintings as |paiting|}}
+	<title>{{paiting.title}}</title>
+	<author>{{paiting.author}}</author>
+	<img src={{paiting.image}}>
+	<div>{{paiting.cost}}<div>
+{{/each}}
+```
 
 ## Tests
 
