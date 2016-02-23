@@ -2,10 +2,11 @@
 
 ## Table of contents:
 * [General](#general)
-* [Organize](#organize)
+* [Organizing Modules](#organizing-modules)
 * [Controllers](#controllers)
 * [Components](#components)
 * [Ember Data](#ember-data)
+* [Templates](#templates)
 * [Tests](#tests)
 
 ## General
