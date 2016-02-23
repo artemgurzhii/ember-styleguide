@@ -117,7 +117,7 @@ app
       route.js
       template.hbs
     components/
-    	displayOfDanger
+      displayOfDanger
         component.js
         template.hbs
 ```
@@ -130,7 +130,7 @@ It makes code more readable if model has the same name as a subject. It’s more
 ```javascript
 const { alias } = Ember.computed;
 export default Ember.Controller.extend({
-	nail: alias('model'),
+  nail: alias('model'),
 });
 ```
 - set it in `setupController` method:
@@ -215,15 +215,15 @@ When content of each block is larger than one line, use component to wrap this c
 ```hbs
 // GOOD
 {{#each paintings as |paiting|}}
-	{{paiting-details paiting=paiting}}
+  {{paiting-details paiting=paiting}}
 {{/each}}
 
 // BAD
 {{#each paintings as |paiting|}}
-	<title>{{paiting.title}}</title>
-	<author>{{paiting.author}}</author>
-	<img src={{paiting.image}}>
-	<div>{{paiting.cost}}<div>
+  <title>{{paiting.title}}</title>
+  <author>{{paiting.author}}</author>
+  <img src={{paiting.image}}>
+  <div>{{paiting.cost}}<div>
 {{/each}}
 ```
 
