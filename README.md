@@ -12,7 +12,7 @@
 ## General
 
 ### Create local version of Ember.* and DS.*
-Ember could perfectly use a new functionality of ES6 namely `modules`. To make code more clear we are able to import e.g. `Ember.computed` directly as `computed`. This operation reduces unneeded namespaces.
+Ember can use new functionality of ES6 - `modules`. In near future, Ember will be build using this convention and eventually we will import `computed` instead of `Ember.computed`. To make code more clear and ready for future, we can create local versions of these modules.
 ```javascript
 import Ember from 'ember';
 import DS from 'ember-data';
@@ -23,52 +23,44 @@ const { computed } = Ember;
 const { alias } = computed;
 
 export default Model.extend({
-	name: attr('string'),
-    degree: attr('string'),    
-    title: alias('degree'),
+  name: attr('string'),
+  degree: attr('string'),
+  title: alias('degree'),
 
-    fullName: computed('name', 'degree' function() {
-    	return `${this.get('degree')} ${this.get('name')}`;
-    })
+  fullName: computed('name', 'degree' function() {
+  	return `${this.get('degree')} ${this.get('name')}`;
+  }),
 });
 
 // BAD
 export default DS.Model.extend({
-	name: DS.attr('string'),
-    degree: DS.attr('string'),  
-    title: Ember.computed.alias('degree'),
+  name: DS.attr('string'),
+  degree: DS.attr('string'),
+  title: Ember.computed.alias('degree'),
 
-    fullName: Ember.computed('name', 'degree', {
-    	get() {
-        	// code
-        }
-        set() {
-        	// code
-        }
-    }),
-
-    wholeName: function() {
-    	return this.get('degree') + ' ' + this.get('name');
-    }.property('name', 'degree')
+  fullName: Ember.computed('name', 'degree', {
+  	greturn `${this.get('degree')} ${this.get('name')}`;
+  }),
 });
 ```
 
 ### Don’t use jQuery without Ember Run Loop
-Using plain jQuery provides invoke actions out of the App. Ember App is based on run loop which is a main handler of all actions. To have control on all operations in ember it's good practice to trigger action in run loop.
+Using plain jQuery provides invoke actions out of the Ember Run Loop. To have control on all operations in Ember it's good practice to trigger actions in run loop.
 ```javascript
 /// GOOD
-Ember.run.next(this, () => {
-	Ember.$('#message').text('Bazinga');
+Ember.$('#something-rendered-by-jquery-plugin').on('click', () => {
+  Ember.run.bind(this, this._handlerActionFromController);
 });
 
 // BAD
-Ember.$('#message').text('Bazinga');
-/// Ember.$ is only an alias to jQuery
+Ember.$('#something-rendered-by-jquery-plugin').on('click', () => {
+  this._handlerActionFromController();
+});
 ```
 
 
 ### Don't use observers
-Usage observers is very easy **BUT** it leads to unpredictable actions in app. Observers are hard to analyze because they do jobs on background. If observers are not necessary then better to omit them.
+Usage of observers is very easy **BUT** it leads to hard to reason about consequences. If observers are not necessary then better to avoid them.
 ```hbs
 {{input value=text key-up="change"}}
 ```
@@ -76,25 +68,25 @@ Usage observers is very easy **BUT** it leads to unpredictable actions in app. O
 ```javascript
 // GOOD
 export default Controller.extend({
-	actions: {
-    	change() {
-        	console.log(`change detected: ${this.get('text')}`);
-        }
-    }
+  actions: {
+    change() {
+      console.log(`change detected: ${this.get('text')}`);
+    },
+  },
 });
 
 // BAD
 export default Model.extend({
-	change: Ember.observer('text', function() {
-    	console.log('change detected: ' + this.get('text'));
-    }
+  change: Ember.observer('text', function() {
+    console.log(`change detected: ${this.get('text')}`);
+  },
 });
 ```
 
 ## Organizing Modules
 
 ### Use PODs structure
-Standard file structure in Ember App is divided by type of file function. Pods organize files by features, it's much better solution because in bigger project find concrete file is significant faster. But whether everything should be kept in pods?
+Standard file structure in Ember App is divided by type of file function. Pods organize files by features, it's much better solution because in bigger project finding particular file is significant faster. But whether everything should be kept in pods?
 
 - what includes in pods:
 	- Routes
@@ -109,25 +101,25 @@ Standard file structure in Ember App is divided by type of file function. Pods o
 // GOOD
 app
 	models/
-    	plants
-        chemicals
-    pods/
-    	application/
-        	controller.js
-            route.js
-            template.hbs
-    	login/
-        	controller.js
-            route.js
-            templates.hbs
-        plants/
-        	controller.js
-            route.js
-            template.hbs
-        components/
-        	displayOfDanger
-            	component.js
-                template.hbs       	        	
+  	plants.js
+    chemicals.js
+  pods/
+  	application/
+      controller.js
+      route.js
+      template.hbs
+  	login/
+      controller.js
+      route.js
+      templates.hbs
+    plants/
+      controller.js
+      route.js
+      template.hbs
+    components/
+    	displayOfDanger
+        component.js
+        template.hbs
 ```
 
 ## Controllers
@@ -138,37 +130,37 @@ It makes code more readable if model has the same name as a subject. It’s more
 ```javascript
 const { alias } = Ember.computed;
 export default Ember.Controller.extend({
-	nail: alias('model')
+	nail: alias('model'),
 });
 ```
 - set it in `setupController` method:
 ```javascript
 export default Ember.Route.extend({
-	setupController(controller, model) => {
-    	controller.set('nail', model);
-    }
+  setupController(controller, model) => {
+  	controller.set('nail', model);
+  },
 });
 ```
 
 ## Ember Data
 
 ### Be explicit with Ember data attribute types
-Ember Data could handle lack of specified types in model description. Nonetheless this could lead to ambiguity. Therefore always supply proper an attribute type to ensure the right data transform is used.
+Ember Data could handle lack of specified types in model description. Nonetheless this could lead to ambiguity. Therefore always supply proper attribute type to ensure the right data transform is used.
 ```javascript
 const { Model, attr } = DS;
 
 // GOOD
 export default Model.extend({
-	name: attr('string'),
-    points: attr('number'),
-    dob: attr('date')
+  name: attr('string'),
+  points: attr('number'),
+  dob: attr('date'),
 });
 
 // BAD
 export default Model.extend({
-	name: attr(),
-    points: attr(),
-    dob: attr()
+  name: attr(),
+  points: attr(),
+  dob: attr(),
 });
 ```
 
@@ -178,46 +170,47 @@ In case when you need a custom behavior it's good to write own [Transform](http:
 ## Components
 
 ### Data Down Action Up
-If we want to create app which embraces immutable data structures, we have to use DDAU convention. In a nutshell you should't change passed data in components instead trigger actions that should change this data.
+You should't change passed data in components instead trigger actions that should change this data.
 
 ```hbs
-// GOOD
-{{nice-component currentData=(action 'freshData')}}
+<!-- GOOD -->
+{{nice-component dataArray=data removeElement=(action "removeElement")}}
 ```
 ```javascript
 export default Component.extend({
-	actions: {
-    	operationX() {
-        	this.attr.currentData();
-        }
-    }
+  actions: {
+    removeElement(element) {
+      this.attr.removeElement(element);
+    },
+  },
 });
 
 export default Controller.extend({
-	actions: {
-    	freshData() {
-        	return sophisticateComputation();
-        }
-    }
+  actions: {
+    removeElement(element) {
+      this.get('data').removeObject(element);
+    },
+  },
 });
 ```
+
 ```hbs
-// BAD
-{{uggly-component currentData=freshData}}
+<!-- BAD -->
+{{uggly-component dataArray=data}}
 ```
 ```javascript
 export default Component.extend({
-	actions: {
-    	operationY() {
-        	this.set('currentData', 'cetasean');
-        }
-    }
+  actions: {
+    removeElement(element) {
+      this.get('dataArray').removeObject(element);
+    },
+  },
 });
 ```
 ## Templates
 
 ## Use components in `{{#each}}` blocks
-When content of each block is larger than one line, use component to wrap this code. Ember convention is build app through divided to smaller modules (Components). This is more flexible and readable. Everywhere when you can extract reusable component, do it!
+When content of each block is larger than one line, use component to wrap this code. Ember convention is build app through divided to smaller modules (Components). This is more flexible and readable. Use simple rule of thumb - if you need more than one line in `#each` block, then use component.
 
 ```hbs
 // GOOD
@@ -237,23 +230,23 @@ When content of each block is larger than one line, use component to wrap this c
 ## Tests
 
 ### Use page objects in acceptance testing
-In acceptance tests there is a tendency to repeat the same code meny times (mainly selectors). To omit this we can extract this to other abstract layer and then import them to tests.
+In acceptance tests there is a tendency to repeat the same code meny times (mainly selectors). It's also hard to reason about exact behavior based only on selector naes. To avoid this we can extract this to other abstract layer and then import them to tests.
 
 ```javascript
 // GOOD
 export default Ember.Object({
-	assertMessage(msg) {
-      andThen(() => {
-        this.get('assert').equal(find('#message').text(), msg);
-      });
-      return this;
-    }
+  expectGroceryHeader(msg) {
+    andThen(() => {
+      this.get('assert').equal(find('#grocery-header').text(), msg);
+    });
+    return this;
+  }
 })
 -----
 import PageObject from 'my-project/tests/page-objects/base';
 ...
 test('check changed message', function(assert) {
-	PageObject.create({ assert })
-    		  .assertMessage('cabbage');
+  PageObject.create({ assert })
+    .expectGroceryHeader('cabbage');
 });
 ```
