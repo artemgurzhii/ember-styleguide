@@ -53,15 +53,15 @@ export default DS.Model.extend({
 ```
 
 ### Don’t use jQuery without Ember Run Loop
-Using plain jQuery provides invoke actions out of the App. Ember App is based on run loop which is a main handler of all actions. To have control on all operations in ember it's good practice to trigger action in run looop.
+Using plain jQuery provides invoke actions out of the App. Ember App is based on run loop which is a main handler of all actions. To have control on all operations in ember it's good practice to trigger action in run loop.
 ```javascript
 /// GOOD
 Ember.run.next(this, () => {
-	Ember.$('#messave').text('Bazinga');
+	Ember.$('#message').text('Bazinga');
 });
 
 // BAD
-Ember.$('#messave').text('Bazinga');
+Ember.$('#message').text('Bazinga');
 /// Ember.$ is only an alias to jQuery
 ```
 
