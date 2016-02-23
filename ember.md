@@ -2,10 +2,11 @@
 
 ## Table of contents:
 * [General](#general)
-* [Organize](#organize)
+* [Organizing Modules](#organizing-modules)
 * [Controllers](#controllers)
 * [Components](#components)
 * [Ember Data](#ember-data)
+* [Templates](#templates)
 * [Tests](#tests)
 
 ## General
@@ -88,6 +89,45 @@ export default Model.extend({
     	console.log('change detected: ' + this.get('text'));
     }
 });
+```
+
+## Organizing Modules
+
+### Use PODs structure
+Standard file structure in Ember App is divided by type of file function. Pods organize files by features, it's much better solution because in bigger project find concrete file is significant faster. But whether everything should be kept in pods?
+
+- what includes in pods:
+	- Routes
+	- Components
+	- Controllers
+	- Templates
+
+- what not includes in pods:
+	- Models
+
+```
+// GOOD
+app
+	models/
+    	plants
+        chemicals
+    pods/
+    	application/
+        	controller.js
+            route.js
+            template.hbs
+    	login/
+        	controller.js
+            route.js
+            templates.hbs
+        plants/
+        	controller.js
+            route.js
+            template.hbs
+        components/
+        	displayOfDanger
+            	component.js
+                template.hbs       	        	
 ```
 
 ## Controllers
@@ -173,6 +213,25 @@ export default Component.extend({
         }
     }
 });
+```
+## Templates
+
+## Use components in `{{#each}}` blocks
+When content of each block is larger than one line, use component to wrap this code. Ember convention is build app through divided to smaller modules (Components). This is more flexible and readable. Everywhere when you can extract reusable component, do it!
+
+```hbs
+// GOOD
+{{#each paintings as |paiting|}}
+	{{paiting-details paiting=paiting}}
+{{/each}}
+
+// BAD
+{{#each paintings as |paiting|}}
+	<title>{{paiting.title}}</title>
+	<author>{{paiting.author}}</author>
+	<img src={{paiting.image}}>
+	<div>{{paiting.cost}}<div>
+{{/each}}
 ```
 
 ## Tests
