@@ -13,10 +13,10 @@
 ### Create local version of Ember.* and DS.*
 Ember could perfectly use a new functionality of ES6 namely `modules`. To make code more clear we are able to import e.g. `Ember.computed` directly as `computed`. This operation reduces unneeded namespaces.
 ```javascript
-// GOOD
 import Ember from 'ember';
 import DS from 'ember-data';
 
+// GOOD
 const { Model, attr } = DS;
 const { computed } = Ember;
 const { alias } = computed;
@@ -185,7 +185,7 @@ In acceptance tests there is a tendency to repeat the same code meny times (main
 export default Ember.Object({
 	assertMessage(msg) {
       andThen(() => {
-        this.get('assert').equal(find('#message').text, msg);
+        this.get('assert').equal(find('#message').text(), msg);
       });
       return this;
     }
