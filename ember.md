@@ -138,7 +138,7 @@ In case when you need a custom behavior it's good to write own [Transform](http:
 ## Components
 
 ### Data Down Action Up
-When we wannt to create app which embrace immutable data structures, we have to use DDAU convention. In a nutshell you should't change passed data in components instead trigger actions that should change this data.
+If we want to create app which embraces immutable data structures, we have to use DDAU convention. In a nutshell you should't change passed data in components instead trigger actions that should change this data.
 
 ```hbs
 // GOOD
