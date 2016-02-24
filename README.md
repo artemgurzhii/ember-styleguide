@@ -39,7 +39,7 @@ export default DS.Model.extend({
   title: Ember.computed.alias('degree'),
 
   fullName: Ember.computed('name', 'degree', {
-  	greturn `${this.get('degree')} ${this.get('name')}`;
+  	return `${this.get('degree')} ${this.get('name')}`;
   }),
 });
 ```
