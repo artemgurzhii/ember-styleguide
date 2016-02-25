@@ -335,10 +335,6 @@ this.route('tree', { path: ':tree_id'});
 this.route('tree', { path: ':treeId'});
 ```
 
-### Route lifecycle
-Yes yes
-
-
 ## Templates
 
 ## Use components in `{{#each}}` blocks
