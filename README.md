@@ -108,9 +108,7 @@ export default Component.extend({
   })
 });
 ```
-In this call we're mutating the `itemsCount` property inside of the `newItems` computed property. This may introduce hard to find bugs in the future as it's not immediately clear
-where did the change in `itemsCount` come from.
-
+In this call we're mutating the `itemsCount` property inside of the `newItems` computed property. This may introduce hard to find bugs in the future as it's not immediately clear where did the change in `itemsCount` come from.
 Computed properties should therefore not introduce side effects but rather (as the name implies) compute and return properties.
 
 ## Organizing Modules
@@ -263,9 +261,7 @@ export default Component.extend({
 ```
 
 ### Service-backed Components
-Sometimes you have some data that are not crucial for given page and can be loaded after the page has been rendered. This way you don't block the page from rendering until those data have been
-fetched from the API. Post comments are a good example. You definitely need post content before the page is rendered - but not necessarily comments. Those do not feel like an appropriate concern for the router
-and so we can fetch those in a service-backed components, e.g:
+Sometimes you have some data that are not crucial for given page and can be loaded after the page has been rendered. This way you don't block the page from rendering until those data have been fetched from the API. Post comments are a good example. You definitely need post content before the page is rendered - but not necessarily comments. Those do not feel like an appropriate concern for the router and so we can fetch those in a service-backed components, e.g:
 
 ```js
 import Ember from 'ember';
@@ -284,6 +280,7 @@ export default Component.extend({
   }
 });
 ```
+
 Summarizing: if you want to change the URL or given data is required for the loaded page to make sense - load data in the router. Otherwise you might want to use a service-backed component.
 
 ## Templates
