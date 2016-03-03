@@ -111,8 +111,7 @@ export default Component.extend({
     const fifteen = this.get('users').filterBy('items', 'age', 15);
     this.set('fifteenAmount', fifteen.length); // SIDE EFFECT!
     return fifteen;
-  });
-
+  })
 });
 ```
 
