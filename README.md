@@ -84,32 +84,37 @@ export default Model.extend({
 ```
 
 ### Don't introduce side-effects in computed properties
-When using computed properties you might be tempted to change other values. However it is **NOT** a good idea. Consider following code:
+When using computed properties do not introduce side effects. It will make reasoning about the origin of the change much harder.
 
 ```js
 import Ember from 'ember';
 
 const {
   Component,
-  computed,
-  inject: { service }
+  computed: { filterBy, alias },
 } = Ember;
 
 export default Component.extend({
-  store: service(),
-  itemsCount: 1,
+  users: [
+    { name: 'Foo', age: 15 },
+    { name: 'Bar', age: 16 },
+    { name: 'Baz', age: 15 }
+  ],
 
-  newItems: computed(function() {
-    this.get('store').findAll('item').then((items) => {
-      // do something with fetched items
-      // BAD: we're introducing side-effects!
-      this.incrementProperty('itemsCount');
-    });
-  })
+  // GOOD:
+  fifteen: filterBy('users', 'age', 15),
+  fifteenAmount: alias('fifteen.length'),
+
+  // BAD:
+  fifteenAmount: 0,
+  fifteen: computed('fifteen', function() {
+    const fifteen = this.get('users').filterBy('items', 'age', 15);
+    this.set('fifteenAmount', fifteen.length); // SIDE EFFECT!
+    return fifteen;
+  });
+
 });
 ```
-In this call we're mutating the `itemsCount` property inside of the `newItems` computed property. This may introduce hard to find bugs in the future as it's not immediately clear where did the change in `itemsCount` come from.
-Computed properties should therefore not introduce side effects but rather (as the name implies) compute and return properties.
 
 ## Organizing Modules
 
