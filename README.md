@@ -107,7 +107,7 @@ export default Component.extend({
 
   // BAD:
   fifteenAmount: 0,
-  fifteen: computed('fifteen', function() {
+  fifteen: computed('users', function() {
     const fifteen = this.get('users').filterBy('items', 'age', 15);
     this.set('fifteenAmount', fifteen.length); // SIDE EFFECT!
     return fifteen;
