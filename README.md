@@ -83,6 +83,38 @@ export default Model.extend({
 });
 ```
 
+### Don't introduce side-effects in computed properties
+When using computed properties do not introduce side effects. It will make reasoning about the origin of the change much harder.
+
+```js
+import Ember from 'ember';
+
+const {
+  Component,
+  computed: { filterBy, alias },
+} = Ember;
+
+export default Component.extend({
+  users: [
+    { name: 'Foo', age: 15 },
+    { name: 'Bar', age: 16 },
+    { name: 'Baz', age: 15 }
+  ],
+
+  // GOOD:
+  fifteen: filterBy('users', 'age', 15),
+  fifteenAmount: alias('fifteen.length'),
+
+  // BAD:
+  fifteenAmount: 0,
+  fifteen: computed('users', function() {
+    const fifteen = this.get('users').filterBy('items', 'age', 15);
+    this.set('fifteenAmount', fifteen.length); // SIDE EFFECT!
+    return fifteen;
+  })
+});
+```
+
 ## Organizing Modules
 
 ### Use PODs structure
@@ -139,6 +171,30 @@ export default Ember.Route.extend({
   setupController(controller, model) => {
   	controller.set('nail', model);
   },
+});
+```
+
+## Query params should always be on top
+If you are using query params in your controller, those should always be placed on top. It will make spotting them much easier.
+
+```js
+import Ember from 'ember';
+
+const { Controller} = Ember;
+
+// BAD
+export default Controller.extend({
+  statusOptions: Ember.String.w('Accepted Pending Rejected')
+  status: [],
+  queryParams: ['status'],
+});
+
+// GOOD
+export default Controller.extend({
+  queryParams: ['status'],
+  status: [],
+
+  statusOptions: Ember.String.w('Accepted Pending Rejected')
 });
 ```
 
@@ -207,6 +263,30 @@ export default Component.extend({
   },
 });
 ```
+
+### Service-backed Components
+Sometimes you have some data that are not crucial for given page and can be loaded after the page has been rendered. This way you don't block the page from rendering until those data have been fetched from the API. Post comments are a good example. You definitely need post content before the page is rendered - but not necessarily comments. Those do not feel like an appropriate concern for the router and so we can fetch those in a service-backed components, e.g:
+
+```js
+import Ember from 'ember';
+
+const {
+  Component,
+  inject: { service }
+} = Ember;
+
+export default Component.extend({
+  store: service(),
+  loadComments() {
+    this.get('store').findAll('comment').then((comments) => {
+      // do something with the comments
+    });
+  }
+});
+```
+
+Summarizing: if you want to change the URL or given data is required for the loaded page to make sense - load data in the router. Otherwise you might want to use a service-backed component.
+
 ## Templates
 
 ## Use components in `{{#each}}` blocks
