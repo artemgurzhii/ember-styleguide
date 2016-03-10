@@ -2,10 +2,11 @@
 
 ## Table of contents:
 * [General](#general)
-* [Organizing Modules](#organizing-modules)
+* [Organizing](#organizing)
 * [Controllers](#controllers)
 * [Components](#components)
 * [Ember Data](#ember-data)
+* [Routing](#routing)
 * [Templates](#templates)
 * [Tests](#tests)
 
@@ -28,7 +29,7 @@ export default Model.extend({
   title: alias('degree'),
 
   fullName: computed('name', 'degree' function() {
-  	return `${this.get('degree')} ${this.get('name')}`;
+    return `${this.get('degree')} ${this.get('name')}`;
   }),
 });
 
@@ -39,7 +40,7 @@ export default DS.Model.extend({
   title: Ember.computed.alias('degree'),
 
   fullName: Ember.computed('name', 'degree', {
-  	return `${this.get('degree')} ${this.get('name')}`;
+    return `${this.get('degree')} ${this.get('name')}`;
   }),
 });
 ```
@@ -115,32 +116,102 @@ export default Component.extend({
 });
 ```
 
-## Organizing Modules
+## Organizing
+
+### Organize your components
+To maintain good readable of code, you should write code grouped and ordered in this way:
+1. Default values
+2. Single line computed properties
+3. Multiline computed properties
+4. Actions
+
+```javascript
+const { Component, computed } = Ember;
+const { alias } = computed;
+
+export default Component.extend({
+  // 1. Defaults
+  role: 'sloth',
+
+  // 2. Single line Computed Property
+  vehicle: alias('car'),
+
+  // 3. Multiline Computed Property
+  levelOfHappiness: computed('attitude', 'health', {
+    const result = this.get('attitude') * this.get('health') * Math.random();
+    return result;
+  }),
+
+  // 4. All actions
+  actions: {
+    sneakyAction() {
+      return this._secretMethod();
+    }
+  }
+});
+```
+
+### Organize your models
+Build model groups for each type of element. You should create 3 main subgroups in this order:
+1. Attributes
+2. Relations
+3. Computed Properties
+
+```javascript
+// GOOD
+export default Model.extend({
+  // 1. Attributes
+  shape: attr('string'),
+
+  // 2. Relations
+  behaviors: hasMany('behaviour'),
+
+  // 3. Computed Properties
+  mood: computed('health', 'hunger', {
+    const result = this.get('health') * this.get('hunger');
+    return result;
+  })
+});
+
+// BAD
+export default Model.extend({
+  mood: computed('health', 'hunger', {
+    const result = this.get('health') * this.get('hunger');
+    return result;
+  }),
+
+  hat: attr('string'),
+
+  behaviors: hasMany('behaviour'),
+
+  shape: attr('string')
+});
+```
 
 ### Use PODs structure
 Standard file structure in Ember App is divided by type of file function. Pods organize files by features, it's much better solution because in bigger project finding particular file is significant faster. But whether everything should be kept in pods?
 
 - what includes in pods:
-	- Routes
-	- Components
-	- Controllers
-	- Templates
+  - Routes
+  - Components
+  - Controllers
+  - Templates
 
 - what not includes in pods:
-	- Models
+  - Models
 
 ```
 // GOOD
 app
-	models/
-  	plants.js
+  models/
+    plants.js
     chemicals.js
   pods/
-  	application/
+    application/
       controller.js
       route.js
       template.hbs
-  	login/
+    login/
       controller.js
       route.js
       templates.hbs
@@ -169,12 +240,12 @@ export default Ember.Controller.extend({
 ```javascript
 export default Ember.Route.extend({
   setupController(controller, model) => {
-  	controller.set('nail', model);
+    controller.set('nail', model);
   },
 });
 ```
 
-## Query params should always be on top
+### Query params should always be on top
 If you are using query params in your controller, those should always be placed on top. It will make spotting them much easier.
 
 ```js
@@ -229,7 +300,7 @@ In case when you need a custom behavior it's good to write own [Transform](http:
 You should't change passed data in components instead trigger actions that should change this data.
 
 ```hbs
-<!-- GOOD -->
+{{! GOOD }}
 {{nice-component dataArray=data removeElement=(action "removeElement")}}
 ```
 ```javascript
@@ -251,7 +322,7 @@ export default Controller.extend({
 ```
 
 ```hbs
-<!-- BAD -->
+{{! BAD }}
 {{uggly-component dataArray=data}}
 ```
 ```javascript
@@ -287,18 +358,73 @@ export default Component.extend({
 
 Summarizing: if you want to change the URL or given data is required for the loaded page to make sense - load data in the router. Otherwise you might want to use a service-backed component.
 
+### Closure Actions
+Always use closure actions (according to DDAU convention). Exception: only when you need bubbling.
+
+```javascript
+export default Controller.extend({
+  actions: {
+    detonate() {
+      alert('Kabooom');
+    }
+  }
+});
+```
+
+```hbs
+{{! GOOD }}
+{{pretty-component boom=(action 'detonate')}}
+```
+
+```javascript
+export default Component.extend({
+  actions: {
+    pushLever() {
+      this.attr.boom();
+    }
+  }
+})
+```
+
+```hbs
+{{! BAD }}
+{{awful-component detonate='detonate'}}
+```
+```javascript
+export default Component.extend({
+  actions: {
+    pushLever() {
+      this.sendAction('detonate');
+    }
+  }
+})
+```
+## Routing
+
+### Route naming
+Dynamic segments in routes should use _snake case_. Reason:
+- Ember could resolve promises without extra serialization work
+
+```javascript
+// GOOD
+this.route('tree', { path: ':tree_id'});
+
+// BAD
+this.route('tree', { path: ':treeId'});
+```
+
 ## Templates
 
 ## Use components in `{{#each}}` blocks
 When content of each block is larger than one line, use component to wrap this code. Ember convention is build app through divided to smaller modules (Components). This is more flexible and readable. Use simple rule of thumb - if you need more than one line in `#each` block, then use component.
 
 ```hbs
-// GOOD
+{{! GOOD }}
 {{#each paintings as |paiting|}}
   {{paiting-details paiting=paiting}}
 {{/each}}
 
-// BAD
+{{! BAD }}
 {{#each paintings as |paiting|}}
   <title>{{paiting.title}}</title>
   <author>{{paiting.author}}</author>
@@ -322,11 +448,11 @@ export default Ember.Object({
     return this;
   }
 })
------
+
 import PageObject from 'my-project/tests/page-objects/base';
 ...
 test('check changed message', function(assert) {
   PageObject.create({ assert })
-    .expectGroceryHeader('cabbage');
+            .expectGroceryHeader('cabbage');
 });
 ```
