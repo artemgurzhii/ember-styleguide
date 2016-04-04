@@ -28,7 +28,7 @@ export default Model.extend({
   degree: attr('string'),
   title: alias('degree'),
 
-  fullName: computed('name', 'degree' function() {
+  fullName: computed('name', 'degree', function() {
     return `${this.get('degree')} ${this.get('name')}`;
   }),
 });
@@ -39,7 +39,7 @@ export default DS.Model.extend({
   degree: DS.attr('string'),
   title: Ember.computed.alias('degree'),
 
-  fullName: Ember.computed('name', 'degree', {
+  fullName: Ember.computed('name', 'degree', function() {
     return `${this.get('degree')} ${this.get('name')}`;
   }),
 });
@@ -183,7 +183,7 @@ export default Component.extend({
   vehicle: alias('car'),
 
   // 3. Multiline Computed Property
-  levelOfHappiness: computed('attitude', 'health', {
+  levelOfHappiness: computed('attitude', 'health', function() {
     const result = this.get('attitude') * this.get('health') * Math.random();
     return result;
   }),
@@ -213,7 +213,7 @@ export default Model.extend({
   behaviors: hasMany('behaviour'),
 
   // 3. Computed Properties
-  mood: computed('health', 'hunger', {
+  mood: computed('health', 'hunger', function() {
     const result = this.get('health') * this.get('hunger');
     return result;
   })
@@ -221,7 +221,7 @@ export default Model.extend({
 
 // BAD
 export default Model.extend({
-  mood: computed('health', 'hunger', {
+  mood: computed('health', 'hunger', function() {
     const result = this.get('health') * this.get('hunger');
     return result;
   }),
