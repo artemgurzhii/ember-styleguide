@@ -285,7 +285,7 @@ export default Ember.Controller.extend({
 - set it in `setupController` method:
 ```javascript
 export default Ember.Route.extend({
-  setupController(controller, model) => {
+  setupController(controller, model) {
     controller.set('nail', model);
   },
 });
@@ -301,7 +301,7 @@ const { Controller} = Ember;
 
 // BAD
 export default Controller.extend({
-  statusOptions: Ember.String.w('Accepted Pending Rejected')
+  statusOptions: Ember.String.w('Accepted Pending Rejected'),
   status: [],
   queryParams: ['status'],
 });
@@ -310,8 +310,7 @@ export default Controller.extend({
 export default Controller.extend({
   queryParams: ['status'],
   status: [],
-
-  statusOptions: Ember.String.w('Accepted Pending Rejected')
+  statusOptions: Ember.String.w('Accepted Pending Rejected'),
 });
 ```
 
@@ -398,7 +397,7 @@ export default Component.extend({
     this.get('store').findAll('comment').then((comments) => {
       // do something with the comments
     });
-  }
+  },
 });
 ```
 
