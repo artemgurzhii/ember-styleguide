@@ -49,9 +49,10 @@ export default DS.Model.extend({
 Using plain jQuery provides invoke actions out of the Ember Run Loop. To have control on all operations in Ember it's good practice to trigger actions in run loop.
 ```javascript
 /// GOOD
-Ember.$('#something-rendered-by-jquery-plugin').on('click', () => {
-  Ember.run.bind(this, this._handlerActionFromController);
-});
+Ember.$('#something-rendered-by-jquery-plugin').on(
+  'click', 
+  Ember.run.bind(this, this._handlerActionFromController)
+);
 
 // BAD
 Ember.$('#something-rendered-by-jquery-plugin').on('click', () => {
