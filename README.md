@@ -50,7 +50,7 @@ Using plain jQuery provides invoke actions out of the Ember Run Loop. To have co
 ```javascript
 /// GOOD
 Ember.$('#something-rendered-by-jquery-plugin').on(
-  'click', 
+  'click',
   Ember.run.bind(this, this._handlerActionFromController)
 );
 
@@ -382,9 +382,18 @@ export default Component.extend({
 ```
 
 ### Service-backed Components
-Sometimes you have some data that are not crucial for given page and can be loaded after the page has been rendered. This way you don't block the page from rendering until those data have been fetched from the API. Post comments are a good example. You definitely need post content before the page is rendered - but not necessarily comments. Those do not feel like an appropriate concern for the router and so we can fetch those in a service-backed components, e.g:
+Sometimes you have some data that are not crucial for given page and can be
+loaded after the page has been rendered. This approach has many advantages such
+as improving perceived load time. One solution to this problem is using
+service-backed components that fetch the data using i.e injected store. This
+makes the component hard to test - therefore it's better to fetch the data in
+the router's `setupController` hook (which doesn't block the render) and pass
+the promise to the component.
 
 ```js
+
+//BAD - service-backed component
+
 import Ember from 'ember';
 
 const {
@@ -400,9 +409,20 @@ export default Component.extend({
     });
   },
 });
-```
 
-Summarizing: if you want to change the URL or given data is required for the loaded page to make sense - load data in the router. Otherwise you might want to use a service-backed component.
+//GOOD
+
+//route
+import Ember from 'ember';
+
+export default Route.extend({
+  setupController(controller, model) {
+    controller.set('commentsPromise', this.store.findAll('comment'));
+  }
+})
+
+// you can now handle commentsPromise in your component or controller
+```
 
 ### Closure Actions
 Always use closure actions (according to DDAU convention). Exception: only when you need bubbling.
