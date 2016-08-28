@@ -528,7 +528,7 @@ When content of each block is larger than one line, use component to wrap this c
 ## Tests
 
 ### Use page objects in acceptance testing
-In acceptance tests there is a tendency to repeat the same code meny times (mainly selectors). It's also hard to reason about exact behavior based only on selector naes. To avoid this we can extract this to other abstract layer and then import them to tests.
+In acceptance tests there is a tendency to repeat the same code many times (mainly selectors). It's also hard to reason about exact behavior based only on selector naes. To avoid this we can extract this to other abstract layer and then import them to tests.
 
 ```javascript
 // GOOD
