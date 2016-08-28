@@ -168,32 +168,58 @@ test('it reloads user in promise handler', function(assert) {
 ### Organize your components
 To maintain good readable of code, you should write code grouped and ordered in this way:
 1. Default values
-2. Single line computed properties
-3. Multiline computed properties
-4. Actions
+2. Services
+3. Single line computed properties
+4. Multiline computed properties
+5. Observers
+6. Lifecycle Hooks
+7. Actions
+8. Custom / private methods
 
 ```javascript
-const { Component, computed } = Ember;
+const { Component, computed, inject: { service } } = Ember;
 const { alias } = computed;
 
 export default Component.extend({
   // 1. Defaults
   role: 'sloth',
+  
+  // 2. Services
+  i18n: service(),
 
-  // 2. Single line Computed Property
+  // 3. Single line Computed Property
   vehicle: alias('car'),
 
-  // 3. Multiline Computed Property
+  // 4. Multiline Computed Property
   levelOfHappiness: computed('attitude', 'health', function() {
     const result = this.get('attitude') * this.get('health') * Math.random();
     return result;
   }),
 
-  // 4. All actions
+  // 5. Observers
+  onVahicleChange: observer('vehicle', function() {
+    // observer logic
+  }),
+
+  // 6. Lifecycle Hooks
+  init() {
+    // custom init logic
+  },
+
+  didInsertElement() {
+    // custom didInsertElement logic
+  },
+
+  // 7. All actions
   actions: {
     sneakyAction() {
       return this._secretMethod();
     }
+  },
+
+  // 8. Custom / private methods
+  _secretMethod() {
+    // custom secret method logic
   }
 });
 ```
