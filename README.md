@@ -167,8 +167,8 @@ test('it reloads user in promise handler', function(assert) {
 
 ### Organize your components
 To maintain good readable of code, you should write code grouped and ordered in this way:
-1. Default values
-2. Services
+1. Services
+2. Default values
 3. Single line computed properties
 4. Multiline computed properties
 5. Observers
@@ -181,11 +181,11 @@ const { Component, computed, inject: { service } } = Ember;
 const { alias } = computed;
 
 export default Component.extend({
-  // 1. Defaults
-  role: 'sloth',
-  
-  // 2. Services
+  // 1. Services
   i18n: service(),
+  
+  // 2. Defaults
+  role: 'sloth',
 
   // 3. Single line Computed Property
   vehicle: alias('car'),
