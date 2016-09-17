@@ -175,7 +175,7 @@ export default Component.extend({
     // GOOD
     abc: computed('xyz', function() { /* custom logic */ }),
     def: observer('xyz', function() { /* custom logic */ }),
-    didInsertElement() { * custom logic */ }
+    didInsertElement() { /* custom logic */ }
 });
 ```
 
