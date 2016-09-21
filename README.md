@@ -507,6 +507,18 @@ export default Component.extend({
   }
 })
 ```
+### Don't use `.on()` calls as components values
+Prevents using `.on()` in favour to component lifecycle hooks methods
+```js
+export default Component.extend({
+  // BAD
+  abc: on('didInsertElement', function () { /* custom logic */ }),
+
+  // GOOD
+  didInsertElement() { /* custom logic */ }
+});
+```
+
 ## Routing
 
 ### Route naming
