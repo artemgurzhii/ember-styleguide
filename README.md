@@ -277,43 +277,6 @@ export default Model.extend({
 });
 ```
 
-### Use PODs structure
-Standard file structure in Ember App is divided by type of file function. Pods organize files by features, it's much better solution because in bigger project finding particular file is significant faster. But whether everything should be kept in pods?
-
-- what includes in pods:
-  - Routes
-  - Components
-  - Controllers
-  - Templates
-
-- what not includes in pods:
-  - Models
-
-```
-// GOOD
-app
-  models/
-    plants.js
-    chemicals.js
-  pods/
-    application/
-      controller.js
-      route.js
-      template.hbs
-    login/
-      controller.js
-      route.js
-      templates.hbs
-    plants/
-      controller.js
-      route.js
-      template.hbs
-    components/
-      displayOfDanger
-        component.js
-        template.hbs
-```
-
 ## Controllers
 
 ### Alias your model
