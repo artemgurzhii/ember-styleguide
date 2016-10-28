@@ -171,12 +171,35 @@ export default Component.extend({
     abc: function() { /* custom logic */ }.property('xyz'),
     def: function() { /* custom logic */ }.observe('xyz'),
     ghi: function() { /* custom logic */ }.on('didInsertElement'),
-    
+
     // GOOD
     abc: computed('xyz', function() { /* custom logic */ }),
     def: observer('xyz', function() { /* custom logic */ }),
     didInsertElement() { /* custom logic */ }
 });
+```
+
+### Use `Ember.get` and `Ember.set`
+This way you don't have to worry whether the object that you're trying to access is an `Ember.Object` or not. It also solves the problem of trying to wrap every object in `Ember.Object` in order to be able to use things like `getWithDefault`.
+```javascript
+// Bad
+this.get('fooProperty');
+this.set('fooProperty', 'bar');
+this.getWithDefault('fooProperty', 'defaultProp');
+object.get('fooProperty');
+object.getProperties('foo', 'bar');
+object.setProperties({ foo: 'bar', baz: 'qux' });
+
+// Good
+
+const { get, set, getWithDefault } = Ember;
+// ...
+get(this, 'fooProperty');
+set(this, 'fooProperty', 'bar');
+getWithDefault(this, 'fooProperty', 'defaultProp');
+get(object, 'fooProperty');
+getProperties(object, 'foo', 'bar');
+setProperties(object, { foo: 'bar', baz: 'qux' });
 ```
 
 ## Organizing
@@ -199,7 +222,7 @@ const { alias } = computed;
 export default Component.extend({
   // 1. Services
   i18n: service(),
-  
+
   // 2. Defaults
   role: 'sloth',
 
