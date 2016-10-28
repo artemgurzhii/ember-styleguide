@@ -171,7 +171,7 @@ export default Component.extend({
     abc: function() { /* custom logic */ }.property('xyz'),
     def: function() { /* custom logic */ }.observe('xyz'),
     ghi: function() { /* custom logic */ }.on('didInsertElement'),
-    
+
     // GOOD
     abc: computed('xyz', function() { /* custom logic */ }),
     def: observer('xyz', function() { /* custom logic */ }),
@@ -187,6 +187,8 @@ this.get('fooProperty');
 this.set('fooProperty', 'bar');
 this.getWithDefault('fooProperty', 'defaultProp');
 object.get('fooProperty');
+object.getProperties('foo', 'bar');
+object.setProperties({ foo: 'bar', baz: 'qux' });
 
 // Good
 
@@ -196,6 +198,8 @@ get(this, 'fooProperty');
 set(this, 'fooProperty', 'bar');
 getWithDefault(this, 'fooProperty', 'defaultProp');
 get(object, 'fooProperty');
+getProperties(object, 'foo', 'bar');
+setProperties(object, { foo: 'bar', baz: 'qux' });
 ```
 
 ## Organizing
@@ -218,7 +222,7 @@ const { alias } = computed;
 export default Component.extend({
   // 1. Services
   i18n: service(),
-  
+
   // 2. Defaults
   role: 'sloth',
 
