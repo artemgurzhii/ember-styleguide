@@ -192,7 +192,13 @@ object.setProperties({ foo: 'bar', baz: 'qux' });
 
 // Good
 
-const { get, set, getWithDefault } = Ember;
+const { 
+  get,
+  set,
+  getWithDefault,
+  getProperties,
+  setProperties
+} = Ember;
 // ...
 get(this, 'fooProperty');
 set(this, 'fooProperty', 'bar');
