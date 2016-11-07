@@ -212,6 +212,7 @@ setProperties(object, { foo: 'bar', baz: 'qux' });
 
 ### Organize your components
 To maintain good readable of code, you should write code grouped and ordered in this way:
+
 1. Services
 2. Default values
 3. Single line computed properties
@@ -271,6 +272,7 @@ export default Component.extend({
 
 ### Organize your models
 Build model groups for each type of element. You should create 3 main subgroups in this order:
+
 1. Attributes
 2. Relations
 3. Computed Properties
@@ -308,6 +310,7 @@ export default Model.extend({
 
 ### Organize your routes
 You should write code grouped and ordered in this way:
+
 1. Services
 2. Default route's properties
 3. Custom properties
@@ -360,6 +363,7 @@ export default Route.extend({
 
 ### Organize your controllers
 You should write code grouped and ordered in this way:
+
 1. Services
 2. Default controller's properties
 3. Custom properties
