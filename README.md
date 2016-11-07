@@ -306,6 +306,110 @@ export default Model.extend({
 });
 ```
 
+### Organize your routes
+You should write code grouped and ordered in this way:
+1. Services
+2. Default route's properties
+3. Custom properties
+4. model() hook
+5. Other route's methods (beforeModel etc.)
+6. Actions
+7. Custom / private methods
+
+
+```javascript
+const { Route, inject: { service }, get } = Ember;
+
+export default Route.extend({
+  // 1. Services
+  currentUser: service(),
+
+  // 2. Default route's properties
+  queryParams: {
+    sortBy: { refreshModel: true },
+  },
+
+  // 3. Custom properties
+  customProp: 'test',
+
+  // 4. Model hook
+  model() {
+    return this.store.findAll('article');
+  },
+
+  // 5. Other route's methods
+  beforeModel() {
+    if (!get(this, 'currentUser.isAdmin')) {
+      this.transitionTo('index');
+    }
+  },
+
+  // 6. All actions
+  actions: {
+    sneakyAction() {
+      return this._secretMethod();
+    },
+  },
+
+  // 7. Custom / private methods
+  _secretMethod() {
+    // custom secret method logic
+  },
+});
+```
+
+### Organize your controllers
+You should write code grouped and ordered in this way:
+1. Services
+2. Default controller's properties
+3. Custom properties
+4. Single line computed properties
+5. Multi line computed properties
+6. Observers
+7. Actions
+8. Custom / private methods
+
+
+```javascript
+const { Controller, computed, inject: { service }, get } = Ember;
+
+export default Controller.extend({
+  // 1. Services
+  currentUser: service(),
+
+  // 2. Default route's properties
+  queryParams: ['view'],
+
+  // 3. Custom properties
+  attitude: 10,
+
+  // 4. Single line Computed Property
+  health: alias('model.health'),
+
+  // 5. Multiline Computed Property
+  levelOfHappiness: computed('attitude', 'health', function() {
+    return get(this, 'attitude') * get(this, 'health') * Math.random();
+  }),
+
+  // 6. Observers
+  onVahicleChange: observer('vehicle', function() {
+    // observer logic
+  }),
+
+  // 7. All actions
+  actions: {
+    sneakyAction() {
+      return this._secretMethod();
+    },
+  },
+
+  // 8. Custom / private methods
+  _secretMethod() {
+    // custom secret method logic
+  },
+});
+```
+
 ### Use PODs structure
 Standard file structure in Ember App is divided by type of file function. Pods organize files by features, it's much better solution because in bigger project finding particular file is significant faster. But whether everything should be kept in pods?
 
