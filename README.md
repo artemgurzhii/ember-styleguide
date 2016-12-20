@@ -763,4 +763,4 @@ test('check changed message', function(assert) {
 ```
 
 ## Credits
-Huge thanks to guys from Dockyard. Big part of our styleguide is based on their [Dockyard Ember Style Guide](https://github.com/netguru/ember-styleguide/). Keep up the good work!
+Huge thanks to guys from Dockyard. Big part of our styleguide is based on their [Dockyard Ember Style Guide](https://github.com/DockYard/styleguides/blob/master/engineering/ember.md). Keep up the good work!
