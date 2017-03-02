@@ -13,7 +13,7 @@
 ## General
 
 ### Create local version of Ember.* and DS.*
-Ember can use new functionality of ES6 - `modules`. In near future, Ember will be build using this convention and eventually we will import `computed` instead of `Ember.computed`. To make code more clear and ready for future, we can create local versions of these modules.
+Ember can use new functionality of ES6 - `modules`. In the near future, Ember will use this convention and eventually we will have to import `computed` instead of `Ember.computed`. To make code more clear and ready for the future, we should create local versions of these modules.
 ```javascript
 import Ember from 'ember';
 import DS from 'ember-data';
@@ -46,7 +46,7 @@ export default DS.Model.extend({
 ```
 
 ### Don’t use jQuery without Ember Run Loop
-Using plain jQuery provides invoke actions out of the Ember Run Loop. To have control on all operations in Ember it's good practice to trigger actions in run loop.
+Using plain jQuery invokes actions out of the Ember Run Loop. In order to have a control on all operations in Ember it's good practice to trigger actions in run loop.
 ```javascript
 /// GOOD
 Ember.$('#something-rendered-by-jquery-plugin').on(
@@ -62,7 +62,7 @@ Ember.$('#something-rendered-by-jquery-plugin').on('click', () => {
 
 
 ### Don't use observers
-Usage of observers is very easy **BUT** it leads to hard to reason about consequences. If observers are not necessary then better to avoid them.
+Usage of observers is very easy **BUT** it leads to hard to reason about consequences. Unless observers are necessary, it's better to avoid them.
 ```hbs
 {{input value=text key-up="change"}}
 ```
@@ -171,7 +171,7 @@ export default Component.extend({
     abc: function() { /* custom logic */ }.property('xyz'),
     def: function() { /* custom logic */ }.observe('xyz'),
     ghi: function() { /* custom logic */ }.on('didInsertElement'),
-    
+
     // GOOD
     abc: computed('xyz', function() { /* custom logic */ }),
     def: observer('xyz', function() { /* custom logic */ }),
@@ -179,10 +179,57 @@ export default Component.extend({
 });
 ```
 
+### Use `Ember.get` and `Ember.set`
+This way you don't have to worry whether the object that you're trying to access is an `Ember.Object` or not. It also solves the problem of trying to wrap every object in `Ember.Object` in order to be able to use things like `getWithDefault`.
+```javascript
+// Bad
+this.get('fooProperty');
+this.set('fooProperty', 'bar');
+this.getWithDefault('fooProperty', 'defaultProp');
+object.get('fooProperty');
+object.getProperties('foo', 'bar');
+object.setProperties({ foo: 'bar', baz: 'qux' });
+
+// Good
+
+const {
+  get,
+  set,
+  getWithDefault,
+  getProperties,
+  setProperties
+} = Ember;
+// ...
+get(this, 'fooProperty');
+set(this, 'fooProperty', 'bar');
+getWithDefault(this, 'fooProperty', 'defaultProp');
+get(object, 'fooProperty');
+getProperties(object, 'foo', 'bar');
+setProperties(object, { foo: 'bar', baz: 'qux' });
+```
+
+### Use brace expansion
+This allows much less redundancy and is easier to read.
+
+Note that **the dependent keys must be together (without space)** for the brace expansion to work.
+
+```
+// Good
+fullName: computed('user.{firstName,lastName}', {
+  // Code
+})
+
+// Bad
+fullName: computed('user.firstName', 'user.lastName', {
+  // Code
+})
+```
+
 ## Organizing
 
 ### Organize your components
-To maintain good readable of code, you should write code grouped and ordered in this way:
+You should write code grouped and ordered in this way:
+
 1. Services
 2. Default values
 3. Single line computed properties
@@ -199,7 +246,7 @@ const { alias } = computed;
 export default Component.extend({
   // 1. Services
   i18n: service(),
-  
+
   // 2. Defaults
   role: 'sloth',
 
@@ -241,7 +288,8 @@ export default Component.extend({
 ```
 
 ### Organize your models
-Build model groups for each type of element. You should create 3 main subgroups in this order:
+You should write code grouped and ordered in this way:
+
 1. Attributes
 2. Relations
 3. Computed Properties
@@ -274,6 +322,112 @@ export default Model.extend({
   behaviors: hasMany('behaviour'),
 
   shape: attr('string')
+});
+```
+
+### Organize your routes
+You should write code grouped and ordered in this way:
+
+1. Services
+2. Default route's properties
+3. Custom properties
+4. model() hook
+5. Other route's methods (beforeModel etc.)
+6. Actions
+7. Custom / private methods
+
+
+```javascript
+const { Route, inject: { service }, get } = Ember;
+
+export default Route.extend({
+  // 1. Services
+  currentUser: service(),
+
+  // 2. Default route's properties
+  queryParams: {
+    sortBy: { refreshModel: true },
+  },
+
+  // 3. Custom properties
+  customProp: 'test',
+
+  // 4. Model hook
+  model() {
+    return this.store.findAll('article');
+  },
+
+  // 5. Other route's methods
+  beforeModel() {
+    if (!get(this, 'currentUser.isAdmin')) {
+      this.transitionTo('index');
+    }
+  },
+
+  // 6. All actions
+  actions: {
+    sneakyAction() {
+      return this._secretMethod();
+    },
+  },
+
+  // 7. Custom / private methods
+  _secretMethod() {
+    // custom secret method logic
+  },
+});
+```
+
+### Organize your controllers
+You should write code grouped and ordered in this way:
+
+1. Services
+2. Default controller's properties
+3. Custom properties
+4. Single line computed properties
+5. Multi line computed properties
+6. Observers
+7. Actions
+8. Custom / private methods
+
+
+```javascript
+const { Controller, computed, inject: { service }, get } = Ember;
+
+export default Controller.extend({
+  // 1. Services
+  currentUser: service(),
+
+  // 2. Default route's properties
+  queryParams: ['view'],
+
+  // 3. Custom properties
+  attitude: 10,
+
+  // 4. Single line Computed Property
+  health: alias('model.health'),
+
+  // 5. Multiline Computed Property
+  levelOfHappiness: computed('attitude', 'health', function() {
+    return get(this, 'attitude') * get(this, 'health') * Math.random();
+  }),
+
+  // 6. Observers
+  onVahicleChange: observer('vehicle', function() {
+    // observer logic
+  }),
+
+  // 7. All actions
+  actions: {
+    sneakyAction() {
+      return this._secretMethod();
+    },
+  },
+
+  // 8. Custom / private methods
+  _secretMethod() {
+    // custom secret method logic
+  },
 });
 ```
 
@@ -471,7 +625,7 @@ export default Component.extend({
 })
 ```
 ### Don't use `.on()` calls as components values
-Prevents using `.on()` in favour to component lifecycle hooks methods
+Prevents using `.on()` in favour of component's lifecycle hooks.
 ```js
 export default Component.extend({
   // BAD
@@ -481,12 +635,43 @@ export default Component.extend({
   didInsertElement() { /* custom logic */ }
 });
 ```
+### Avoid leaking state
+Don't use arrays and objects as default properties. More info here: https://dockyard.com/blog/2015/09/18/ember-best-practices-avoid-leaking-state-into-factories
+
+
+```
+// BAD
+export default Ember.Component.extend({
+  items: [],
+
+  actions: {
+    addItem(item) {
+      this.get('items').pushObject(item);
+    },
+  },
+});
+```
+
+```
+// Good
+export default Ember.Component.extend({
+  init() {
+    this._super(...arguments);
+    this.items = [];
+  },
+
+  actions: {
+    addItem(item) {
+      this.get('items').pushObject(item);
+    },
+  },
+});
+```
 
 ## Routing
 
 ### Route naming
-Dynamic segments in routes should use _snake case_. Reason:
-- Ember could resolve promises without extra serialization work
+Dynamic segments in routes should use _snake case_, so Ember doesn't have to do extra serialization in order to resolve promises.
 
 ```javascript
 // GOOD
@@ -539,3 +724,6 @@ test('check changed message', function(assert) {
             .expectGroceryHeader('cabbage');
 });
 ```
+
+## Credits
+Huge thanks to guys from Dockyard. Big part of our styleguide is based on their [Dockyard Ember Style Guide](https://github.com/DockYard/styleguides/blob/master/engineering/ember.md). Keep up the good work!
