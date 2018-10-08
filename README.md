@@ -154,7 +154,7 @@ export default Component.extend({
 ```
 
 And then you can make simple unit tests for handlers:
-```
+```js
 test('it reloads user in promise handler', function(assert) {
   const component = this.subject();
   // assuming that you have `user` defined with kind of sinon spy on its reload method
@@ -213,7 +213,7 @@ This allows much less redundancy and is easier to read.
 
 Note that **the dependent keys must be together (without space)** for the brace expansion to work.
 
-```
+```js
 // Good
 fullName: computed('user.{firstName,lastName}', {
   // Code
@@ -639,7 +639,7 @@ export default Component.extend({
 Don't use arrays and objects as default properties. More info here: https://dockyard.com/blog/2015/09/18/ember-best-practices-avoid-leaking-state-into-factories
 
 
-```
+```js
 // BAD
 export default Ember.Component.extend({
   items: [],
@@ -652,7 +652,7 @@ export default Ember.Component.extend({
 });
 ```
 
-```
+```js
 // Good
 export default Ember.Component.extend({
   init() {
